@@ -2,8 +2,8 @@ package id.co.mandiri.dao;
 
 import com.maryanto.dimas.plugins.web.commons.ui.datatables.DataTablesRequest;
 import com.maryanto.dimas.plugins.web.commons.ui.datatables.dao.DaoCrudDataTablesPattern;
-import id.co.mandiri.entity.CategoryDevice;
-import id.co.mandiri.repository.CategoryDeviceRepository;
+import id.co.mandiri.entity.ColorDevice;
+import id.co.mandiri.repository.ColorDeviceRepository;
 import id.co.mandiri.utils.QueryComparator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,59 +12,58 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
-public class CategoryDeviceDao implements DaoCrudDataTablesPattern<CategoryDevice, String> {
+public class ColorDeviceDao implements DaoCrudDataTablesPattern<ColorDevice, String> {
 
     @Autowired
     private NamedParameterJdbcTemplate jdbcTemplate;
 
     @Autowired
-    private CategoryDeviceRepository categoryDeviceRepository;
+    private ColorDeviceRepository ColorDeviceRepository;
 
     @Override
-    public CategoryDevice findId(String s) {
-        return categoryDeviceRepository.findOne(s);
+    public ColorDevice findId(String s) {
+        return ColorDeviceRepository.findOne(s);
     }
 
     @Override
     @Deprecated
-    public List<CategoryDevice> findAll() {
+    public List<ColorDevice> findAll() {
         return null;
     }
 
     @Override
-    public CategoryDevice save(CategoryDevice categoryDevice) {
-        return categoryDeviceRepository.save(categoryDevice);
+    public ColorDevice save(ColorDevice ColorDevice) {
+        return ColorDeviceRepository.save(ColorDevice);
     }
 
     @Override
-    public CategoryDevice update(CategoryDevice categoryDevice) {
-        return categoryDeviceRepository.save(categoryDevice);
+    public ColorDevice update(ColorDevice ColorDevice) {
+        return ColorDeviceRepository.save(ColorDevice);
     }
 
     @Override
-    public boolean remove(CategoryDevice categoryDevice) {
-        categoryDeviceRepository.delete(categoryDevice);
+    public boolean remove(ColorDevice ColorDevice) {
+        ColorDeviceRepository.delete(ColorDevice);
         return true;
     }
 
     @Override
     public boolean removeById(String s) {
-        categoryDeviceRepository.delete(s);
+        ColorDeviceRepository.delete(s);
         return true;
     }
 
     @Override
-    public List<CategoryDevice> datatables(DataTablesRequest<CategoryDevice> params) {
-        String baseQuery = "select id, name, description\n" +
-                "from device_category\n" +
+    public List<ColorDevice> datatables(DataTablesRequest<ColorDevice> params) {
+        String baseQuery = "select id, name, code, description\n" +
+                "from device_Color\n" +
                 "where 1 = 1 ";
 
-        CategoryDevice param = params.getValue();
+        ColorDevice param = params.getValue();
 
-        CategoryDeviceQueryCompare compare = new CategoryDeviceQueryCompare(baseQuery);
+        ColorDeviceQueryCompare compare = new ColorDeviceQueryCompare(baseQuery);
         StringBuilder query = compare.getQuery(param);
         MapSqlParameterSource values = compare.getParameters();
 
@@ -83,6 +82,12 @@ public class CategoryDeviceDao implements DaoCrudDataTablesPattern<CategoryDevic
                 break;
             case 2:
                 if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
+                    query.append(" order by code asc ");
+                else
+                    query.append(" order by code desc ");
+                break;
+            case 3:
+                if (StringUtils.equalsIgnoreCase(params.getColDir(), "asc"))
                     query.append(" order by description asc ");
                 else
                     query.append(" order by description desc ");
@@ -100,20 +105,21 @@ public class CategoryDeviceDao implements DaoCrudDataTablesPattern<CategoryDevic
         values.addValue("limit", params.getLength());
 
         return this.jdbcTemplate.query(query.toString(), values, (resultSet, i) ->
-                new CategoryDevice(
+                new ColorDevice(
                         resultSet.getString("id"),
                         resultSet.getString("name"),
+                        resultSet.getString("code"),
                         resultSet.getString("description")
                 ));
     }
 
     @Override
-    public Long datatables(CategoryDevice param) {
-        String baseQuery = "select count(id) as rows \n" +
-                "from device_category\n" +
+    public Long datatables(ColorDevice param) {
+        String baseQuery = "select count(*)\n" +
+                "from device_Color\n" +
                 "where 1 = 1 ";
 
-        CategoryDeviceQueryCompare compare = new CategoryDeviceQueryCompare(baseQuery);
+        ColorDeviceQueryCompare compare = new ColorDeviceQueryCompare(baseQuery);
         StringBuilder query = compare.getQuery(param);
         MapSqlParameterSource values = compare.getParameters();
 
@@ -125,19 +131,19 @@ public class CategoryDeviceDao implements DaoCrudDataTablesPattern<CategoryDevic
 
     }
 
-    private class CategoryDeviceQueryCompare implements QueryComparator<CategoryDevice> {
+    private class ColorDeviceQueryCompare implements QueryComparator<ColorDevice> {
 
         private MapSqlParameterSource parameterSource;
         private StringBuilder query;
 
-        CategoryDeviceQueryCompare(String query) {
+        ColorDeviceQueryCompare(String query) {
             this.parameterSource = new MapSqlParameterSource();
             this.query = new StringBuilder(query);
         }
 
 
         @Override
-        public StringBuilder getQuery(CategoryDevice param) {
+        public StringBuilder getQuery(ColorDevice param) {
             if (StringUtils.isNoneBlank(param.getId())) {
                 query.append(" and lower(id) like :id ");
                 parameterSource.addValue("id",
@@ -150,6 +156,14 @@ public class CategoryDeviceDao implements DaoCrudDataTablesPattern<CategoryDevic
             if (StringUtils.isNoneBlank(param.getName())) {
                 query.append(" and lower(name) like :name ");
                 parameterSource.addValue("name", new StringBuilder("%")
+                        .append(param.getName().toLowerCase())
+                        .append("%")
+                        .toString());
+            }
+
+            if (StringUtils.isNoneBlank(param.getName())) {
+                query.append(" and lower(name) like :code ");
+                parameterSource.addValue("code", new StringBuilder("%")
                         .append(param.getName().toLowerCase())
                         .append("%")
                         .toString());

@@ -3,60 +3,60 @@ package id.co.mandiri.service;
 import com.maryanto.dimas.plugins.web.commons.ui.datatables.DataTablesRequest;
 import com.maryanto.dimas.plugins.web.commons.ui.datatables.DataTablesResponse;
 import com.maryanto.dimas.plugins.web.commons.ui.datatables.service.ServiceCrudDataTablesPattern;
-import id.co.mandiri.dao.CategoryDeviceDao;
-import id.co.mandiri.entity.CategoryDevice;
+import id.co.mandiri.dao.ColorDeviceDao;
+import id.co.mandiri.entity.ColorDevice;
+import id.co.mandiri.entity.ColorDevice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
-public class CategoryDeviceService implements ServiceCrudDataTablesPattern<CategoryDevice, String> {
+public class ColorDeviceService implements ServiceCrudDataTablesPattern<ColorDevice, String> {
 
     @Autowired
-    private CategoryDeviceDao categoryDao;
+    private ColorDeviceDao colorDao;
 
     @Override
-    public CategoryDevice findId(String s) {
-        return categoryDao.findId(s);
+    public ColorDevice findId(String s) {
+        return colorDao.findId(s);
     }
 
     @Override
-    public List<CategoryDevice> findAll() {
+    public List<ColorDevice> findAll() {
         return null;
     }
 
     @Override
     @Transactional
-    public CategoryDevice save(CategoryDevice value) {
-        return categoryDao.save(value);
+    public ColorDevice save(ColorDevice value) {
+        return colorDao.save(value);
     }
 
     @Override
     @Transactional
-    public CategoryDevice update(CategoryDevice value) {
-        return categoryDao.update(value);
+    public ColorDevice update(ColorDevice value) {
+        return colorDao.update(value);
     }
 
     @Override
     @Transactional
-    public boolean remove(CategoryDevice value) {
-        return categoryDao.remove(value);
+    public boolean remove(ColorDevice value) {
+        return colorDao.remove(value);
     }
 
     @Override
     @Transactional
     public boolean removeById(String s) {
-        return categoryDao.removeById(s);
+        return colorDao.removeById(s);
     }
 
     @Override
-    public DataTablesResponse<CategoryDevice> datatables(DataTablesRequest<CategoryDevice> params) {
-        List<CategoryDevice> values = categoryDao.datatables(params);
-        Long rowCount = categoryDao.datatables(params.getValue());
+    public DataTablesResponse<ColorDevice> datatables(DataTablesRequest<ColorDevice> params) {
+        List<ColorDevice> values = colorDao.datatables(params);
+        Long rowCount = colorDao.datatables(params.getValue());
         return new DataTablesResponse<>(values, params.getDraw(), rowCount, rowCount);
     }
 }

@@ -1,4 +1,4 @@
-create table color_device(
+create table color_category(
   id          varchar(64)  not null primary key,
   name        varchar(150) not null,
   code  varchar(150) not null,
